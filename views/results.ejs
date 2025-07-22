@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ranked CVs</title>
+</head>
+<body>
+  <h2>Ranked CVs</h2>
+  <form action="/send" method="POST">
+    <% ranked.forEach((cv, i) => { %>
+      <div>
+        <strong>Rank <%= i + 1 %></strong><br>
+        <p><%= cv.explanation %></p>
+        <input type="hidden" name="accepted[<%= i %>][email]" value="<%= cv.email %>">
+        <input type="hidden" name="accepted[<%= i %>][reason]" value="<%= cv.explanation %>">
+        <input type="hidden" name="accepted[<%= i %>][placeholderName]" value="Candidate">
+      </div>
+      <hr>
+    <% }) %>
+    <button type="submit">Send Emails</button>
+  </form>
+</body>
+</html>
