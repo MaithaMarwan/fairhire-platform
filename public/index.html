@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FairHire - AI-Powered Fair Recruitment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            color: #718096;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .nav-btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #4c51bf, #553c9a);
+            transform: translateY(-2px);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section h2 {
+            color: #2d3748;
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 16px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(72, 187, 120, 0.4);
+            width: 100%;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.6);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+            transform: translateY(-1px);
+        }
+
+        .success-message, .error-message {
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-weight: 500;
+            text-align: center;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .file-info {
+            background: #e6fffa;
+            color: #234e52;
+            padding: 15px;
+            border: 2px solid #81e6d9;
+            border-radius: 12px;
+            margin-top: 15px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .cv-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .cv-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .cv-card h3 {
+            color: #2d3748;
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+
+        .cv-score {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .cv-explanation {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 4px solid #4299e1;
+            line-height: 1.6;
+        }
+
+        .cv-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .btn-accept {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-accept:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(72, 187, 120, 0.5);
+        }
+
+        .btn-reject {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 15px rgba(245, 101, 101, 0.3);
+        }
+
+        .btn-reject:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(245, 101, 101, 0.5);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending { background: #fed7d7; color: #c53030; }
+        .status-accepted { background: #c6f6d5; color: #2f855a; }
+        .status-rejected { background: #fed7d7; color: #c53030; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .bias-reminder {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(237, 137, 54, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header h1 { font-size: 2.5em; }
+            .section { padding: 25px; }
+            .nav { flex-direction: column; align-items: center; }
+            .nav-btn { width: 100%; max-width: 300px; }
+            .cv-actions { flex-direction: column; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 FairHire</h1>
+            <p class="subtitle">AI-Powered Fair Recruitment Platform</p>
+            <div class="nav">
+                <button class="nav-btn active" onclick="showSection('applicant')">
+                    📝 Apply for Job
+                </button>
+                <button class="nav-btn" onclick="showSection('recruiter')">
+                    👥 Recruiter Dashboard
+                </button>
+                <button class="nav-btn" onclick="showSection('admin')">
+                    ⚙️ Admin Panel
+                </button>
+            </div>
+        </div>
+
+        <!-- Applicant Section -->
+        <div id="applicant-section" class="section active">
+            <h2>Submit Your Application</h2>
+            
+            <div id="success-msg" class="success-message"></div>
+            <div id="error-msg" class="error-message"></div>
+            
+            <form id="applicationForm">
+                <div class="form-group">
+                    <label for="jobTitle">🎯 Select Job Position:</label>
+                    <select id="jobTitle" required>
+                        <option value="">Choose your ideal position...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">📧 Email Address:</label>
+                    <input type="email" id="email" required placeholder="your.email@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">📱 Phone Number:</label>
+                    <input type="tel" id="phone" required placeholder="+1 (555) 123-4567">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cvFile">📄 Upload Your CV/Resume:</label>
+                    <input type="file" id="cvFile" accept=".pdf,.doc,.docx" required>
+                    <small style="color: #718096; display: block; margin-top: 8px;">
+                        📋 Supported formats: PDF, DOC, DOCX (Maximum 5MB)
+                    </small>
+                    <div id="fileInfo" class="file-info"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="coverLetter">💬 Cover Letter (Optional):</label>
+                    <textarea id="coverLetter" rows="5" placeholder="Tell us why you're excited about this opportunity and what unique value you'd bring to our team..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    🚀 Submit Application
+                </button>
+            </form>
+        </div>
+
+        <!-- Recruiter Section -->
+        <div id="recruiter-section" class="section">
+            <h2>Recruiter Dashboard</h2>
+            
+            <div class="bias-reminder">
+                ⚖️ <strong>Fair Hiring Reminder:</strong> Candidate names and personal details are hidden to ensure unbiased evaluation. Focus solely on qualifications and skills.
+            </div>
+            
+            <div class="form-group">
+                <label for="jobSelect">🎯 Select Job Position to Review:</label>
+                <select id="jobSelect" onchange="loadApplications()">
+                    <option value="">Choose a position to review applications...</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin: 25px 0; flex-wrap: wrap;">
+                <button onclick="rankApplications()" class="btn-primary" style="flex: 1; min-width: 200px;">
+                    🤖 AI Rank Applications
+                </button>
+                <button onclick="refreshApplications()" class="btn-secondary" style="padding: 16px 24px;">
+                    🔄 Refresh
+                </button>
+            </div>
+
+            <div id="applicationsContainer">
+                <p style="text-align: center; color: #718096; font-size: 18px; padding: 40px;">
+                    👆 Select a job position above to view and review applications
+                </p>
+            </div>
+        </div>
+
+        <!-- Admin Section -->
+        <div id="admin-section" class="section">
+            <h2>Admin Dashboard</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalApplications">-</div>
+                    <div class="stat-label">Total Applications</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingApplications">-</div>
+                    <div class="stat-label">Pending Review</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="acceptedApplications">-</div>
+                    <div class="stat-label">Accepted</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="rejectedApplications">-</div>
+                    <div class="stat-label">Rejected</div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin: 25px 0; flex-wrap: wrap;">
+                <button onclick="loadStatistics()" class="btn-primary" style="flex: 1;">
+                    📊 Refresh Statistics
+                </button>
+                <button onclick="exportData()" class="btn-secondary" style="padding: 16px 24px;">
+                    💾 Export Data
+                </button>
+            </div>
+
+            <div class="cv-card">
+                <h3>📈 System Status</h3>
+                <p><strong>Platform:</strong> Railway Cloud</p>
+                <p><strong>Database:</strong> PostgreSQL</p>
+                <p><strong>Status:</strong> <span style="color: #48bb78;">✅ Operational</span></p>
+                <p><strong>Last Updated:</strong> <span id="lastUpdated">Loading...</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>🎯 FairHire Platform • AI-Powered Fair Recruitment • Built with ❤️</p>
+        <p>Ensuring bias-free hiring through technology</p>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE = window.location.origin + '/api';
+        
+        // Global state
+        let currentJobs = [];
+        let currentApplications = [];
+        let authToken = localStorage.getItem('authToken');
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('App starting...');
+            setupEventListeners();
+            loadJobsWithFallback();
+            checkServerHealth();
+            
+            // Update timestamp
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+        });
+
+        function setupEventListeners() {
+            // File upload handling
+            document.getElementById('cvFile').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const fileInfo = document.getElementById('fileInfo');
+                
+                if (file) {
+                    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    const fileIcon = getFileIcon(file.type);
+                    fileInfo.innerHTML = `${fileIcon} <strong>File ready:</strong> ${file.name} (${sizeMB} MB)`;
+                    fileInfo.style.display = 'block';
+                } else {
+                    fileInfo.style.display = 'none';
+                }
+            });
+
+            // Form submission
+            document.getElementById('applicationForm').addEventListener('submit', submitApplication);
+        }
+
+        function getFileIcon(fileType) {
+            if (fileType === 'application/pdf') return '📄';
+            if (fileType.includes('word')) return '📝';
+            return '📎';
+        }
+
+        async function checkServerHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                console.log('Server health:', data);
+            } catch (error) {
+                console.error('Health check failed:', error);
+                showMessage('Connection to server failed. Please refresh the page.', 'error');
+            }
+        }
+
+        async function loadJobsWithFallback() {
+            console.log('Loading jobs...');
+            
+            // Always load fallback jobs first for immediate display
+            const fallbackJobs = [
+                { 
+                    job_key: 'software-engineer', 
+                    title: 'Software Engineer', 
+                    department: 'Engineering', 
+                    location: 'Remote',
+                    description: 'Full-stack development with modern technologies'
+                },
+                { 
+                    job_key: 'data-scientist', 
+                    title: 'Data Scientist', 
+                    department: 'Data & Analytics', 
+                    location: 'Hybrid - New York',
+                    description: 'ML/AI and statistical analysis'
+                },
+                { 
+                    job_key: 'product-manager', 
+                    title: 'Product Manager', 
+                    department: 'Product', 
+                    location: 'San Francisco',
+                    description: 'Product strategy and user research'
+                },
+                { 
+                    job_key: 'marketing-manager', 
+                    title: 'Marketing Manager', 
+                    department: 'Marketing', 
+                    location: 'Remote',
+                    description: 'Digital marketing and brand management'
+                },
+                { 
+                    job_key: 'sales-representative', 
+                    title: 'Sales Representative', 
+                    department: 'Sales', 
+                    location: 'Boston, MA',
+                    description: 'B2B sales and relationship building'
+                }
+            ];
+
+            // Show fallback jobs immediately
+            populateJobSelectors(fallbackJobs);
+            console.log('Fallback jobs loaded');
+
+            // Try to load from API (will work once deployed)
+            try {
+                const response = await fetch(`${API_BASE}/jobs`);
+                if (response.ok) {
+                    const apiJobs = await response.json();
+                    if (apiJobs && apiJobs.length > 0) {
+                        populateJobSelectors(apiJobs);
+                        currentJobs = apiJobs;
+                        console.log('API jobs loaded successfully');
+                    }
+                }
+            } catch (error) {
+                console.log('API not available yet (normal for local testing):', error.message);
+                // Keep using fallback jobs
+                currentJobs = fallbackJobs;
+            }
+        }
+
+        function populateJobSelectors(jobs) {
+            const applicantSelect = document.getElementById('jobTitle');
+            const recruiterSelect = document.getElementById('jobSelect');
+            
+            // Clear existing options (keep first placeholder)
+            applicantSelect.innerHTML = '<option value="">Choose your ideal position...</option>';
+            recruiterSelect.innerHTML = '<option value="">Choose a position to review applications...</option>';
+            
+            // Add fallback jobs if API fails
+            if (!jobs || jobs.length === 0) {
+                const fallbackJobs = [
+                    { job_key: 'software-engineer', title: 'Software Engineer', department: 'Engineering', location: 'Remote' },
+                    { job_key: 'data-scientist', title: 'Data Scientist', department: 'Data & Analytics', location: 'Hybrid' },
+                    { job_key: 'product-manager', title: 'Product Manager', department: 'Product', location: 'San Francisco' },
+                    { job_key: 'marketing-manager', title: 'Marketing Manager', department: 'Marketing', location: 'Remote' },
+                    { job_key: 'sales-representative', title: 'Sales Representative', department: 'Sales', location: 'Boston' }
+                ];
+                jobs = fallbackJobs;
+                console.log('Using fallback jobs - server may not be running yet');
+            }
+            
+            jobs.forEach(job => {
+                const option1 = document.createElement('option');
+                option1.value = job.job_key;
+                option1.textContent = `${job.title} - ${job.department || 'Department'} (${job.location || 'Location TBD'})`;
+                applicantSelect.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = job.job_key;
+                option2.textContent = `${job.title} - ${job.department || 'Department'}`;
+                recruiterSelect.appendChild(option2);
+            });
+            
+            console.log(`Loaded ${jobs.length} job positions`);
+        }
+
+        async function submitApplication(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('jobKey', document.getElementById('jobTitle').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('phone', document.getElementById('phone').value);
+            formData.append('coverLetter', document.getElementById('coverLetter').value);
+            formData.append('cvFile', document.getElementById('cvFile').files[0]);
+
+            // Validation
+            if (!formData.get('jobKey') || !formData.get('email') || !formData.get('phone') || !formData.get('cvFile')) {
+                showMessage('Please fill in all required fields and upload your CV', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="loading-spinner"></div>Submitting Application...';
+
+            try {
+                const response = await fetch(`${API_BASE}/applications`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage(`🎉 Application submitted successfully! Your reference ID is: ${result.anonymizedId}`, 'success');
+                    document.getElementById('applicationForm').reset();
+                    document.getElementById('fileInfo').style.display = 'none';
+                } else {
+                    throw new Error(result.error || 'Submission failed');
+                }
+            } catch (error) {
+                console.error('Submission error:', error);
+                showMessage(`❌ ${error.message}`, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        async function loadApplications() {
+            const jobSelect = document.getElementById('jobSelect');
+            const container = document.getElementById('applicationsContainer');
+            
+            if (!jobSelect.value) {
+                container.innerHTML = `
+                    <p style="text-align: center; color: #718096; font-size: 18px; padding: 40px;">
+                        👆 Select a job position above to view and review applications
+                    </p>
+                `;
+                return;
+            }
+
+            container.innerHTML = '<p style="text-align: center; padding: 40px;">Loading applications...</p>';
+
+            try {
+                const response = await fetch(`${API_BASE}/applications?jobKey=${jobSelect.value}`, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load applications');
+                }
+
+                const applications = await response.json();
+                currentApplications = applications;
+                displayApplications(applications);
+            } catch (error) {
+                console.error('Failed to load applications:', error);
+                container.innerHTML = `
+                    <div class="cv-card">
+                        <p style="color: #e53e3e; text-align: center;">
+                            ❌ Failed to load applications. This may be because:
+                        </p>
+                        <ul style="margin: 15px 0; padding-left: 20px;">
+                            <li>The server is still starting up (try refreshing in a minute)</li>
+                            <li>No applications have been submitted yet</li>
+                            <li>Database connection issue</li>
+                        </ul>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button onclick="loadApplications()" class="btn-secondary">🔄 Try Again</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function displayApplications(applications) {
+            const container = document.getElementById('applicationsContainer');
+            
+            if (applications.length === 0) {
+                container.innerHTML = `
+                    <div class="cv-card">
+                        <p style="text-align: center; color: #718096;">
+                            📝 No applications found for this position yet.
+                        </p>
+                        <p style="text-align: center; color: #718096; margin-top: 10px;">
+                            Applications will appear here once candidates start applying.
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = applications.map(app => `
+                <div class="cv-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+                        <div>
+                            <h3>🎯 Application ${app.anonymized_id}</h3>
+                            <span class="status-badge status-${app.status}">
+                                ${app.status.toUpperCase()}
+                            </span>
+                        </div>
+                        <div style="text-align: right;">
+                            <small>📅 ${new Date(app.submitted_at).toLocaleDateString()}</small>
+                            ${app.ai_score ? `<div class="cv-score">Score: ${app.ai_score}/100</div>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <p>📄 <strong>File:</strong> ${app.file_name} (${(app.file_size/1024).toFixed(1)} KB)</p>
+                        <p>📋 <strong>Position:</strong> ${app.job_title}</p>
+                        <p>👤 <strong>Contact:</strong> [Hidden for bias prevention]</p>
+                    </div>
+
+                    ${app.ai_explanation ? `
+                        <div class="cv-explanation">
+                            <strong>🤖 AI Analysis:</strong><br>
+                            ${app.ai_explanation}
+                        </div>
+                    ` : ''}
+
+                    ${app.status === 'pending' ? `
+                        <div class="cv-actions">
+                            <button class="btn-accept" onclick="updateApplicationStatus('${app.id}', 'accepted')">
+                                ✅ Accept Candidate
+                            </button>
+                            <button class="btn-reject" onclick="updateApplicationStatus('${app.id}', 'rejected')">
+                                ❌ Reject Application
+                            </button>
+                        </div>
+                    ` : `
+                        <p style="text-align: center; margin-top: 15px; font-weight: 600; color: ${app.status === 'accepted' ? '#48bb78' : '#e53e3e'};">
+                            ${app.status === 'accepted' ? '✅ Application Accepted' : '❌ Application Rejected'}
+                        </p>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        async function rankApplications() {
+            const jobSelect = document.getElementById('jobSelect');
+            if (!jobSelect.value) {
+                showMessage('Please select a job position first', 'error');
+                return;
+            }
+
+            try {
+                showMessage('🤖 AI is analyzing and ranking applications...', 'success');
+                
+                const response = await fetch(`${API_BASE}/applications/rank`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+                    },
+                    body: JSON.stringify({ jobKey: jobSelect.value })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage(`✅ ${result.message}`, 'success');
+                    loadApplications(); // Reload to show updated scores
+                } else {
+                    throw new Error(result.error || 'Ranking failed');
+                }
+            } catch (error) {
+                console.error('Ranking error:', error);
+                showMessage(`❌ ${error.message}`, 'error');
+            }
+        }
+
+        async function updateApplicationStatus(applicationId, status) {
+            const actionText = status === 'accepted' ? 'accept' : 'reject';
+            
+            if (!confirm(`Are you sure you want to ${actionText} this application?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/applications/${applicationId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showMessage(`✅ Application ${status} successfully! Email notification sent.`, 'success');
+                    loadApplications(); // Reload applications
+                    loadStatistics(); // Update statistics
+                } else {
+                    throw new Error(result.error || 'Status update failed');
+                }
+            } catch (error) {
+                console.error('Status update error:', error);
+                showMessage(`❌ ${error.message}`, 'error');
+            }
+        }
+
+        async function loadStatistics() {
+            try {
+                const response = await fetch(`${API_BASE}/statistics`, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+
+                if (response.ok) {
+                    const stats = await response.json();
+                    document.getElementById('totalApplications').textContent = stats.total_applications || '0';
+                    document.getElementById('pendingApplications').textContent = stats.pending_applications || '0';
+                    document.getElementById('acceptedApplications').textContent = stats.accepted_applications || '0';
+                    document.getElementById('rejectedApplications').textContent = stats.rejected_applications || '0';
+                } else {
+                    // Fallback for when API is not available
+                    document.getElementById('totalApplications').textContent = '-';
+                    document.getElementById('pendingApplications').textContent = '-';
+                    document.getElementById('acceptedApplications').textContent = '-';
+                    document.getElementById('rejectedApplications').textContent = '-';
+                }
+            } catch (error) {
+                console.error('Failed to load statistics:', error);
+                // Set fallback values
+                document.getElementById('totalApplications').textContent = '-';
+                document.getElementById('pendingApplications').textContent = '-';
+                document.getElementById('acceptedApplications').textContent = '-';
+                document.getElementById('rejectedApplications').textContent = '-';
+            }
+        }
+
+        function refreshApplications() {
+            loadApplications();
+        }
+
+        function exportData() {
+            showMessage('📊 Export functionality will be available once the server is fully deployed', 'error');
+        }
+
+        function showSection(sectionName) {
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Show selected section
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionName + '-section').classList.add('active');
+
+            // Load section-specific data
+            if (sectionName === 'admin') {
+                loadStatistics();
+            }
+        }
+
+        function showMessage(text, type) {
+            const successMsg = document.getElementById('success-msg');
+            const errorMsg = document.getElementById('error-msg');
+            
+            // Hide both first
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            if (type === 'success') {
+                successMsg.textContent = text;
+                successMsg.style.display = 'block';
+                setTimeout(() => successMsg.style.display = 'none', 5000);
+            } else {
+                errorMsg.textContent = text;
+                errorMsg.style.display = 'block';
+                setTimeout(() => errorMsg.style.display = 'none', 8000);
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            loadJobsWithFallback();
+            loadStatistics();
+        });
+    </script>
+</body>
+</html>
